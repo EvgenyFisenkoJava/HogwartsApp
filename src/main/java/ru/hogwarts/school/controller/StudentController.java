@@ -1,19 +1,17 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/student")
 
 public class StudentController {
-    public final StudentService studentService;
-    @Autowired
+    private final StudentService studentService;
+
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
@@ -48,14 +46,23 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> filteredByAge(@RequestParam(required = false) int age) {
-        return studentService.getStudentByAge(age);
+    public ResponseEntity findStudents(@RequestParam(required = false) Integer age) {
+        if (age != null) {
+            return ResponseEntity.ok(studentService.getStudentByAge(age));
+        } else {
+            return ResponseEntity.ok(studentService.getAllStudents());
+        }
     }
 
-    @GetMapping("/all")
-    public List<Student> allStudents() {
-        return studentService.getAllStudents();
+    @GetMapping("/{min}/{max}")
+    public ResponseEntity findByAgeRange(@PathVariable Integer min,
+                                         @PathVariable Integer max) {
+        return ResponseEntity.ok(studentService.getStudentByAgeRange(min, max));
     }
 
+    @GetMapping(params = "faculty_of_student")
+    public Faculty findFacultyOfStudent(@RequestParam(value = "faculty_of_student", required = false) Long id) {
+        return studentService.findStudentFaculty(id);
+    }
 
 }

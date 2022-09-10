@@ -1,26 +1,23 @@
 package ru.hogwarts.school.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.List;
+import java.util.Collection;
 
 @Service
-
-
 public class FacultyService {
-
-
     private final FacultyRepository facultyRepository;
 
     @Autowired
-    public FacultyService(FacultyRepository facultyRepository) {
+    public FacultyService(FacultyRepository facultyRepository, StudentRepository studentRepository) {
+
         this.facultyRepository = facultyRepository;
     }
-
 
     public Faculty createFaculty(Faculty faculty) {
         return facultyRepository.save(faculty);
@@ -31,7 +28,6 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-
         return facultyRepository.save(faculty);
     }
 
@@ -39,12 +35,20 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-
-    public List<Faculty> getFacultyByColor(String color) {
-       return facultyRepository.findByColor(color);
+    public Collection<Faculty> getFacultyByColor(String color) {
+        return facultyRepository.findByColor(color);
     }
-    public List<Faculty> getFacultyList() {
+
+    public Collection<Faculty> getFacultyList() {
         return facultyRepository.findAll();
+    }
+
+    public Collection<Faculty> getFacultyByNameOrColor(String name, String color) {
+        return facultyRepository.findByNameOrColorIgnoreCase(name, color);
+    }
+
+    public Collection<Student> findByFacultyId(Long id) {
+        return facultyRepository.findById(id).get().getStudents();
     }
 
 }

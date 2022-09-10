@@ -1,0 +1,17 @@
+select *
+from student;
+
+select *
+from student
+where  age >10 and age <25;
+
+select *
+from student
+where name like '%a%';
+
+select *
+from student
+where age < student.id;
+
+select * from student
+order by age;
