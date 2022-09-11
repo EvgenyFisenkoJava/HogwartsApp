@@ -6,6 +6,8 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/student")
 
@@ -36,6 +38,8 @@ public class StudentController {
         if (changeStudent == null) {
             return ResponseEntity.notFound().build();
         }
+        changeStudent.setName(student.getName());
+        changeStudent.setAge(student.getAge());
         return ResponseEntity.ok(changeStudent);
     }
 
@@ -45,24 +49,27 @@ public class StudentController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity findStudents(@RequestParam(required = false) Integer age) {
-        if (age != null) {
-            return ResponseEntity.ok(studentService.getStudentByAge(age));
-        } else {
-            return ResponseEntity.ok(studentService.getAllStudents());
-        }
+    @GetMapping("/{age}/student")
+    public ResponseEntity<Collection<Student>> findStudents(@PathVariable Integer age) {
+
+        return ResponseEntity.ok(studentService.getStudentByAge(age));
     }
 
-    @GetMapping("/{min}/{max}")
-    public ResponseEntity findByAgeRange(@PathVariable Integer min,
-                                         @PathVariable Integer max) {
+    @GetMapping()
+    public ResponseEntity<Collection<Student>> findByAgeRange(@RequestParam(required = false) Integer min,
+                                                              @RequestParam(required = false) Integer max) {
+        if (min == null || max == null) {
+            return ResponseEntity.ok(studentService.getAllStudents());
+        }
         return ResponseEntity.ok(studentService.getStudentByAgeRange(min, max));
     }
 
-    @GetMapping(params = "faculty_of_student")
-    public Faculty findFacultyOfStudent(@RequestParam(value = "faculty_of_student", required = false) Long id) {
-        return studentService.findStudentFaculty(id);
+    @GetMapping("{id}/students")
+    public ResponseEntity <Faculty> findFacultyOfStudent(@PathVariable Long id) {
+        if (id == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studentService.findStudentFaculty(id));
     }
 
 }

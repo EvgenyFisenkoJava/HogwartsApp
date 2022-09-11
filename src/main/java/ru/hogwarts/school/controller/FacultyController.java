@@ -3,7 +3,10 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/faculty")
@@ -24,6 +27,11 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
+    @GetMapping
+    public ResponseEntity<Collection<Faculty>> getFacultiesList() {
+        return ResponseEntity.ok(facultyService.getFacultyList());
+    }
+
     @PostMapping
     public Faculty addFaculty(@RequestBody Faculty faculty) {
         return facultyService.createFaculty(faculty);
@@ -35,6 +43,8 @@ public class FacultyController {
         if (changeFaculty == null) {
             return ResponseEntity.notFound().build();
         }
+        changeFaculty.setName(faculty.getName());
+        changeFaculty.setColor(faculty.getColor());
         return ResponseEntity.ok(changeFaculty);
     }
 
@@ -44,18 +54,23 @@ public class FacultyController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity findFaculties(@RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String color) {
-        if (color != null || name != null) {
-            return ResponseEntity.ok(facultyService.getFacultyByNameOrColor(name, color));
+    @GetMapping("/{nameOrColor}/faculty")
+    public ResponseEntity<Faculty> findFaculties(@PathVariable String nameOrColor) {
+        Faculty findFaculty = facultyService.getFacultyByNameOrColor(nameOrColor);
+        if (nameOrColor == null) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(facultyService.getFacultyList());
+        else if (nameOrColor.equals(findFaculty.getName()) || nameOrColor.equals(findFaculty.getColor())) {
+            return ResponseEntity.ok(facultyService.getFacultyByNameOrColor(nameOrColor));
+        }
+        return ResponseEntity.ok(findFaculty);
     }
 
-    @GetMapping(params = "students_of_faculty")
-    public ResponseEntity findStudentsOfFaculty(@RequestParam(value = "students_of_faculty", required = false) Long id) {
-
+    @GetMapping("/{id}/students")
+    public ResponseEntity<Collection<Student>> findStudentsOfFaculty(@PathVariable Long id) {
+        if (id == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(facultyService.findByFacultyId(id));
     }
 

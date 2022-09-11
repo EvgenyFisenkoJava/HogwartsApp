@@ -1,6 +1,5 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -13,7 +12,6 @@ import java.util.Collection;
 public class StudentService {
     private final StudentRepository studentRepository;
 
-    @Autowired
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository) {
 
         this.studentRepository = studentRepository;
@@ -24,7 +22,7 @@ public class StudentService {
     }
 
     public Student findStudent(Long id) {
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id).orElse(null);
     }
 
     public Student editStudent(Student student) {
@@ -49,7 +47,7 @@ public class StudentService {
     }
 
     public Faculty findStudentFaculty(Long id) {
-        return studentRepository.findById(id).get().getFaculty();
+        return studentRepository.findById(id).orElse(null).getFaculty();
     }
 
 }

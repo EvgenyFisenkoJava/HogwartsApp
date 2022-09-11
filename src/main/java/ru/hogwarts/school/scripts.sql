@@ -1,9 +1,9 @@
-select *
+select name
 from student;
 
 select *
 from student
-where  age >10 and age <25;
+where  age between 10 and 25;
 
 select *
 from student
