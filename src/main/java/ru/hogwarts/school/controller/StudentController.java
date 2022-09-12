@@ -9,7 +9,7 @@ import ru.hogwarts.school.service.StudentService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/students")
 
 public class StudentController {
     private final StudentService studentService;
@@ -34,13 +34,11 @@ public class StudentController {
 
     @PutMapping
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
-        Student changeStudent = studentService.editStudent(student);
-        if (changeStudent == null) {
+
+        if (studentService.editStudent(student) == null) {
             return ResponseEntity.notFound().build();
         }
-        changeStudent.setName(student.getName());
-        changeStudent.setAge(student.getAge());
-        return ResponseEntity.ok(changeStudent);
+        return ResponseEntity.ok(studentService.editStudent(student));
     }
 
     @DeleteMapping("/{id}")
@@ -51,22 +49,18 @@ public class StudentController {
 
     @GetMapping("/{age}/student")
     public ResponseEntity<Collection<Student>> findStudents(@PathVariable Integer age) {
-
         return ResponseEntity.ok(studentService.getStudentByAge(age));
     }
 
     @GetMapping()
     public ResponseEntity<Collection<Student>> findByAgeRange(@RequestParam(required = false) Integer min,
                                                               @RequestParam(required = false) Integer max) {
-        if (min == null || max == null) {
-            return ResponseEntity.ok(studentService.getAllStudents());
-        }
         return ResponseEntity.ok(studentService.getStudentByAgeRange(min, max));
     }
 
     @GetMapping("{id}/students")
-    public ResponseEntity <Faculty> findFacultyOfStudent(@PathVariable Long id) {
-        if (id == null) {
+    public ResponseEntity<Faculty> findFacultyOfStudent(@PathVariable Long id) {
+        if (studentService.findStudentFaculty(id) == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(studentService.findStudentFaculty(id));

@@ -26,19 +26,17 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-        return facultyRepository.save(faculty);
+        if (facultyRepository.findById(faculty.getId()).isPresent()) {
+            Faculty foundFaculty = facultyRepository.findById(faculty.getId()).get();
+            foundFaculty.setName(faculty.getName());
+            foundFaculty.setColor(faculty.getColor());
+            return facultyRepository.save(foundFaculty);
+        }
+        return null;
     }
 
     public void deleteFaculty(Long id) {
         facultyRepository.deleteById(id);
-    }
-
-    public Collection<Faculty> getFacultyByColor(String color) {
-        return facultyRepository.findByColor(color);
-    }
-
-    public Collection<Faculty> getFacultyList() {
-        return facultyRepository.findAll();
     }
 
     public Faculty getFacultyByNameOrColor(String nameOrColor) {
@@ -46,9 +44,11 @@ public class FacultyService {
     }
 
     public Collection<Student> findByFacultyId(Long id) {
-        return facultyRepository.findById(id).orElse(null).getStudents();
+        if (findFaculty(id) != null) {
+            return findFaculty(id).getStudents();
+        }
+        return null;
     }
-
 }
 
 

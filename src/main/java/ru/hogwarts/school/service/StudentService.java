@@ -26,7 +26,13 @@ public class StudentService {
     }
 
     public Student editStudent(Student student) {
-        return studentRepository.save(student);
+        if (studentRepository.findById(student.getId()).isPresent()) {
+            Student foundStudent = studentRepository.findById(student.getId()).get();
+            foundStudent.setName(student.getName());
+            foundStudent.setAge(student.getAge());
+            return studentRepository.save(foundStudent);
+        }
+        return null;
     }
 
     public void deleteStudent(Long id) {
@@ -42,12 +48,10 @@ public class StudentService {
     }
 
 
-    public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
     public Faculty findStudentFaculty(Long id) {
-        return studentRepository.findById(id).orElse(null).getFaculty();
+        if (findStudent(id) != null) {
+            return findStudent(id).getFaculty();
+        }
+        return null;
     }
-
 }
