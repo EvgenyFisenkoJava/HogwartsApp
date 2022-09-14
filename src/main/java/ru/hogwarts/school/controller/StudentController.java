@@ -14,8 +14,14 @@ import java.util.Collection;
 public class StudentController {
     private final StudentService studentService;
 
+
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
+    }
+
+    @GetMapping()
+    public ResponseEntity<Collection<Student>> findByAgeRange(@RequestParam(required = false) Integer min, @RequestParam(required = false) Integer max) {
+        return ResponseEntity.ok(studentService.getStudentByAgeRange(min, max));
     }
 
     @GetMapping("/{id}")
@@ -27,6 +33,20 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
+    @GetMapping("/{age}/student")
+    public ResponseEntity<Collection<Student>> findStudents(@PathVariable Integer age) {
+        return ResponseEntity.ok(studentService.getStudentByAge(age));
+    }
+
+    @GetMapping("{id}/students")
+    public ResponseEntity<Faculty> findFacultyOfStudent(@PathVariable Long id) {
+        Faculty findFaculty = studentService.findStudentFaculty(id);
+        if (findFaculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(findFaculty);
+    }
+
     @PostMapping
     public Student addStudent(@RequestBody Student student) {
         return studentService.createStudent(student);
@@ -34,11 +54,11 @@ public class StudentController {
 
     @PutMapping
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
-
-        if (studentService.editStudent(student) == null) {
+        Student updateStudent = studentService.editStudent(student);
+        if (updateStudent == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(studentService.editStudent(student));
+        return ResponseEntity.ok(updateStudent);
     }
 
     @DeleteMapping("/{id}")
@@ -47,23 +67,5 @@ public class StudentController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{age}/student")
-    public ResponseEntity<Collection<Student>> findStudents(@PathVariable Integer age) {
-        return ResponseEntity.ok(studentService.getStudentByAge(age));
-    }
-
-    @GetMapping()
-    public ResponseEntity<Collection<Student>> findByAgeRange(@RequestParam(required = false) Integer min,
-                                                              @RequestParam(required = false) Integer max) {
-        return ResponseEntity.ok(studentService.getStudentByAgeRange(min, max));
-    }
-
-    @GetMapping("{id}/students")
-    public ResponseEntity<Faculty> findFacultyOfStudent(@PathVariable Long id) {
-        if (studentService.findStudentFaculty(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(studentService.findStudentFaculty(id));
-    }
 
 }

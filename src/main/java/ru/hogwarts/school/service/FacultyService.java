@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
-import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
 
@@ -12,7 +11,7 @@ import java.util.Collection;
 public class FacultyService {
     private final FacultyRepository facultyRepository;
 
-    public FacultyService(FacultyRepository facultyRepository, StudentRepository studentRepository) {
+    public FacultyService(FacultyRepository facultyRepository) {
 
         this.facultyRepository = facultyRepository;
     }
@@ -26,13 +25,11 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-        if (facultyRepository.findById(faculty.getId()).isPresent()) {
-            Faculty foundFaculty = facultyRepository.findById(faculty.getId()).get();
-            foundFaculty.setName(faculty.getName());
-            foundFaculty.setColor(faculty.getColor());
-            return facultyRepository.save(foundFaculty);
-        }
-        return null;
+
+        Faculty foundFaculty = findFaculty(faculty.getId());
+        foundFaculty.setName(faculty.getName());
+        foundFaculty.setColor(faculty.getColor());
+        return facultyRepository.save(foundFaculty);
     }
 
     public void deleteFaculty(Long id) {
@@ -44,8 +41,9 @@ public class FacultyService {
     }
 
     public Collection<Student> findByFacultyId(Long id) {
-        if (findFaculty(id) != null) {
-            return findFaculty(id).getStudents();
+        Faculty faculty = findFaculty(id);
+        if (faculty != null) {
+            return faculty.getStudents();
         }
         return null;
     }
