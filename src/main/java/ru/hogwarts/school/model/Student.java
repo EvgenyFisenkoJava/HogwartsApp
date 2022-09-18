@@ -73,4 +73,7 @@ public class Student {
         return Objects.equals(id, student.id) && Objects.equals(name, student.name) && Objects.equals(age, student.age);
     }
 
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
 }
