@@ -9,7 +9,6 @@ public class Avatar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String filePath;
     private long fileSize;
     private String mediaType;
@@ -34,9 +33,7 @@ public class Avatar {
         this.data = data;
     }
 
-
     public Avatar() {
-
     }
 
     public Long getId() {

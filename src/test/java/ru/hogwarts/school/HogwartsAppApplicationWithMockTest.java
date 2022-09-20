@@ -27,22 +27,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(controllers = FacultyController.class)
-
 public class HogwartsAppApplicationWithMockTest {
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private FacultyRepository facultyRepository;
-
     @SpyBean
     private FacultyService facultyService;
-
-
     @InjectMocks
     private FacultyController facultyController;
-
 
     @Test
     public void saveFacultyTest() throws Exception {
@@ -70,8 +63,6 @@ public class HogwartsAppApplicationWithMockTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.color").value(color));
-
-
     }
 
     @Test
@@ -170,7 +161,7 @@ public class HogwartsAppApplicationWithMockTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/faculties/" + id)
                         .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk());
+                .andExpect(status().isOk());
     }
 
     @Test
