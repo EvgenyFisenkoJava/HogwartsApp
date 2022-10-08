@@ -82,18 +82,61 @@ public class StudentService {
     }
 
     public List<String> getStudentsNameStartsWithA() {
-        List<Student> students = studentRepository.findAll();
-        List<String> startsWithA = students.stream()
+        return studentRepository.findAll()
+                .stream()
                 .filter(student -> student.getName().startsWith("A"))
                 .map(s -> s.getName().toUpperCase())
                 .sorted()
                 .collect(Collectors.toList());
-        return startsWithA;
+
     }
 
     public Double getStudentsAverageAge() {
-        List<Student> students = studentRepository.findAll();
-        return students.stream()
+        return studentRepository.findAll()
+                .stream()
                 .collect(Collectors.averagingInt(Student::getAge));
+    }
+
+    public void allStudentsThread() {
+
+        List<Student> students = studentRepository.findAll();
+
+        printStudents(students.subList(0, 2));
+
+        new Thread(() -> {
+            printStudents(students.subList(2, 4));
+        }).start();
+
+        new Thread(() -> {
+            printStudents(students.subList(4, 6));
+        }).start();
+    }
+
+
+    private void printStudents(List<Student> students) {
+        for (Student student : students) {
+            System.out.println(student.getName());
+        }
+    }
+
+    public void allStudentsThreadSync() {
+
+        List<Student> students = studentRepository.findAll();
+
+        printStudentsSync(students.subList(0, 2));
+
+        new Thread(() -> {
+            printStudentsSync(students.subList(2, 4));
+        }).start();
+
+        new Thread(() -> {
+            printStudentsSync(students.subList(4, 6));
+        }).start();
+    }
+
+    private synchronized void printStudentsSync(List<Student> students) {
+        for (Student student : students) {
+            System.out.println(student.getName());
+        }
     }
 }

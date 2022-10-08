@@ -72,6 +72,16 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudentsAverageAge());
     }
 
+    @GetMapping("/studentsThread")
+    public void allStudentsThread() {
+        studentService.allStudentsThread();
+    }
+
+    @GetMapping("/studentsThreadSync")
+    public void allStudentsThreadSync() {
+        studentService.allStudentsThreadSync();
+    }
+
     @PostMapping
     public Student addStudent(@RequestBody Student student) {
         return studentService.createStudent(student);

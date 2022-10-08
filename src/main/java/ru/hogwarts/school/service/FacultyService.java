@@ -65,13 +65,10 @@ public class FacultyService {
     }
 
     public Optional<String> longestName() {
-        List<Faculty> facultyList = facultyRepository.findAll();
-
-        Optional<String> a = facultyList.stream()
+        return facultyRepository.findAll()
+                .stream()
                 .max(Comparator.comparingInt(f -> f.getName().length()))
                 .map(Faculty::getName);
-
-        return a;
     }
 }
 
